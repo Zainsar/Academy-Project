@@ -1,4 +1,4 @@
-const db = require("../config/dbconfig")
+const db = require("../config/dbconfig.js")
 const Sequelize = require("sequelize")
 
 const Franchise_Signup = db.define("franchise_signup", {
@@ -9,35 +9,36 @@ const Franchise_Signup = db.define("franchise_signup", {
     },
     fran_email: {
         type: Sequelize.STRING,
-        required: [true, "email is required"],
-        unique: true,
+        // allowNull: false,
+        unique: {
+            name: 'Franchise_email_unique',
+            msg: 'Email address is already in use.'
+        }
     },
     fran_username: {
         type: Sequelize.STRING,
-        required: [true, "Username is required"],
-        unique: true,
+        // allowNull: false,
+        unique: {
+            name: 'Franchise_Username_unique',
+            msg: 'Username is already in use.'
+        }
     },
     fran_password: {
         type: Sequelize.STRING,
-        required: [true, "password is required"],
-    },
-    fran_Age: {
-        type: Sequelize.INTEGER,
-        required: [true, "age is required"],
+        // allowNull: false,
     },
     fran_address: {
         type: Sequelize.STRING,
-        required: [true, "Address is required"],
+        // allowNull: false,
     },
     fran_phone: {
         type: Sequelize.STRING,
-        required: [true, "phone number is require"],
+        // allowNull: false,
     },
     fran_Status: {
-        type: Sequelize.STRING,
-        required: [true, "Status is require"],
-        default: "Active",
-        enum: ["Active", "Deactive"],
+        type: Sequelize.BOOLEAN,
+        defaultValue: () => true
+        // allowNull: false,
     }
 })
 

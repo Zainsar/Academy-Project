@@ -1,17 +1,26 @@
-const productController = require('../Controllers/productController')
+const express = require("express");
+const FranchiseController = require("../Controllers/franchiseControllers.js");
+const Franchise = require("../Middleware/franAuth2.js");
+const AdminToken = require("../Middleware/Auth2.js");
 
-const router = require('express').Router()
+const router = express.Router();
 
-router.post('/addproduct', productController.addProduct)
+router.post("/addfran", AdminToken, FranchiseController.add_Franchise);
 
-router.get('/allproducts', productController.getallproduct)
+router.get("/getallfran", AdminToken, FranchiseController.getAllFranchise);
 
-router.get('/published', productController.getpublishproduct)
+router.get("/getonefran", AdminToken, FranchiseController.getOneFranchise);
 
-router.get('/:id', productController.getsingleproduct)
+router.put("/updatefranpro/:fran_id", Franchise, FranchiseController.updateFranchiseProfile);
 
-router.put('/:id', productController.getupdateproduct)
+router.put("/updatefranStatus/:fran_id", AdminToken, FranchiseController.updateFranchiseStatus);
 
-router.delete('/:id', productController.getdeleteproduct)
+router.post("/updatePasswordfran/:fran_id", Franchise, FranchiseController.updateFranchisePassword);
 
-module.exports = router
+router.post("/resetPasswordfran", Franchise, FranchiseController.resetFranchisePassword);
+
+router.post("/loginfranchise", FranchiseController.loginFranchise);
+
+router.delete("/deletefran/:fran_id", AdminToken, FranchiseController.deleteFranchise);
+
+module.exports = router;

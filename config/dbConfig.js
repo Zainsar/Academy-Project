@@ -6,7 +6,7 @@ const db = new Sequelize(
   "zain123",
   {
     // host: '10.193.113.78',
-    host: "DESKTOP-6A48J47\\SQLEXPRESS",
+    host: "localhost",
     dialect: "mssql",
     port: '1433',
     dialectOptions: {

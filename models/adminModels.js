@@ -1,5 +1,5 @@
-const db = require("../config/dbconfig")
-const Sequelize = require("sequelize")
+const db = require("../config/dbconfig");
+const Sequelize = require("sequelize");
 
 const Admin_Signup = db.define("admin_signup", {
     admin_id: {
@@ -9,30 +9,35 @@ const Admin_Signup = db.define("admin_signup", {
     },
     admin_email: {
         type: Sequelize.STRING,
-        required: [true, "email is required"],
-        unique: true,
+        allowNull: false,
+        unique: {
+            name: 'admin_email_unique',
+            msg: 'Email address is already in use.'
+        }
     },
     admin_username: {
         type: Sequelize.STRING,
-        required: [true, "Username is required"],
-        unique: true,
+        allowNull: false,
+        unique: {
+            name: 'admin_username_unique',
+            msg: 'Username is already in use.'
+        }
     },
     admin_password: {
         type: Sequelize.STRING,
-        required: [true, "password is required"],
+        allowNull: false,
     },
     admin_Age: {
         type: Sequelize.INTEGER,
-        required: [true, "age is required"],
+        allowNull: false,
     },
     admin_address: {
         type: Sequelize.STRING,
-        required: [true, "Address is required"],
+        allowNull: false,
     },
     admin_phone: {
         type: Sequelize.STRING,
-        required: [true, "phone number is require"],
+        allowNull: false,
     }
-})
-
-module.exports = Admin_Signup
+});
+module.exports = Admin_Signup;

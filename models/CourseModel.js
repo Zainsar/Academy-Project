@@ -1,6 +1,6 @@
 const db = require("../config/dbconfig")
 const Sequelize = require("sequelize");
-const Courses_Timing = require("./CourseTiminigModel");
+const Franchise_Signup = require("./franchiseModel");
 
 const Courses = db.define("courses", {
     C_id: {
@@ -8,40 +8,45 @@ const Courses = db.define("courses", {
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
     },
+    Franchise_id: {
+        type: Sequelize.UUID,
+        allowNull: false,
+    },
     C_Name: {
         type: Sequelize.STRING,
-        required: [true, "Course Name is required"],
-        unique: true,
+        allowNull: false
     },
     C_Tduration: {
         type: Sequelize.STRING,
-        required: [true, "Time Duration is required"],
-        unique: true,
+        allowNull: false
     },
     C_Mduration: {
         type: Sequelize.STRING,
-        required: [true, "Month Duration is required"],
+        allowNull: false
     },
-    Time_id: {
-        type: Sequelize.INTEGER,
-        required: [true, "Time Id is required"],
+    Timestart: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    TimeEnd: {
+        type: Sequelize.STRING,
+        allowNull: false
     },
     C_Days: {
         type: Sequelize.STRING,
-        required: [true, "Days is required"],
+        allowNull: false
     },
     C_Fees: {
         type: Sequelize.STRING,
-        required: [true, "Fees is require"],
+        allowNull: false
     },
     C_Status: {
         type: Sequelize.STRING,
-        required: [true, "Status is require"],
-        default: "Active",
-        enum: ["Active", "Deactive"],
+        allowNull: false,
+        defaultValue: () => true
     }
 })
 
-Courses.belongsTo(Courses_Timing, { foreignKey: 'Time_id', onDelete: 'CASCADE' });
+Courses.belongsTo(Franchise_Signup, { foreignKey: 'Franchise_id' });
 
 module.exports = Courses

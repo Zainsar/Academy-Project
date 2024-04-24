@@ -2,16 +2,16 @@ const express = require('express')
 const cors = require('cors')
 const db = require("./config/dbconfig.js")
 const bodyParser = require('body-parser')
+const router = require('./routes/adminRoutes.js')
+const franchiserouter = require('./routes/franchiseRoute.js')
+const Courserouter = require('./routes/courseRoute.js')
+const dontenv = require("dotenv").config()
 
 const app = express()
 
 const corOptions = {
     origin: 'http://localhost:8080'
 }
-
-// Router
-
-const router = require('./Routes/adminRoutes.js')
 
 // middleware
 
@@ -30,10 +30,12 @@ app.get('/api', (req, res) => {
     })
 })
 
+// Router
 app.use('/api/academy', router)
+app.use('/api/academy', franchiserouter)
+app.use('/api/academy', Courserouter)
 
 //port
-
 const PORT = process.env.PORT || 8080
 
 // server
