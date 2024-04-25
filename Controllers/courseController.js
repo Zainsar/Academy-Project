@@ -1,6 +1,8 @@
 const CourseModel = require("../models/CourseModel.js");
+const Franchise = require("../models/franchiseModel.js");
 const getToken = require("../Middleware/franAuth.js");
 const { Where } = require("sequelize/lib/utils");
+const Franchise_Signup = require("../models/franchiseModel.js");
 
 const add_Course = async (req, res) => {
     try {
@@ -61,7 +63,7 @@ const getAllCourse = async (req, res) => {
 
 const FranchiseAllCourses = async (req, res) => {
     try {
-        const Course = await CourseModel.findAll({ Where: { Franchise_id: Franchise_id } });
+        const Course = await CourseModel.findAll({ Where: { Franchise_id: req.body.Franchise_id } });
         if (!Course || Course.length === 0) {
             return res.status(404).send({
                 success: false,
@@ -70,6 +72,36 @@ const FranchiseAllCourses = async (req, res) => {
         }
 
         res.status(200).send({
+            success: true,
+            message: "Franchise All Courses get Successfully",
+            Course,
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            success: false,
+            message: "Error in Get Franchise All Courses API",
+            error: error.message,
+        });
+    }
+};
+
+const FranchiseWithCourses = async (req, res) => {
+    try {
+        // const Course = await CourseModel.findByPk(req.body.C_id);
+        const Course = await CourseModel.findOne({
+            where: { C_id: req.body.id },
+            include: [{ model: Franchise_Signup }]
+        });
+
+        if (!Course) {
+            return res.status(404).send({
+                success: false,
+                message: "Franchise & Courses Not Found",
+            });
+        }
+
+        res.status(200).json({
             success: true,
             message: "Franchise All Courses get Successfully",
             Course,
@@ -207,6 +239,7 @@ module.exports = {
     add_Course,
     getAllCourse,
     FranchiseAllCourses,
+    FranchiseWithCourses,
     getOneCourse,
     updateCourseProfile,
     updateCourseStatus,

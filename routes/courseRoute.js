@@ -5,11 +5,13 @@ const AdminToken = require("../Middleware/Auth2.js");
 
 const router = express.Router();
 
-router.post("/addcourse", Franchise ,CourseController.add_Course);
+router.post("/addcourse", Franchise, CourseController.add_Course);
 
 router.get("/getallcourse", Franchise, CourseController.getAllCourse);
 
 router.get("/franchiseallcourses", AdminToken, CourseController.FranchiseAllCourses);
+
+router.get("/FranchiseWithCourses", AdminToken, CourseController.FranchiseWithCourses);
 
 router.get("/getonecourse", Franchise, CourseController.getOneCourse);
 

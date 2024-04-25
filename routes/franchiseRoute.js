@@ -23,4 +23,6 @@ router.post("/loginfranchise", FranchiseController.loginFranchise);
 
 router.delete("/deletefran/:fran_id", AdminToken, FranchiseController.deleteFranchise);
 
+router.post("/getFranchiseCourses", AdminToken, FranchiseController.getFranchiseCourses);
+
 module.exports = router;

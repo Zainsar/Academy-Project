@@ -47,6 +47,7 @@ const Courses = db.define("courses", {
     }
 })
 
+Franchise_Signup.hasMany(Courses, { foreignKey: 'Franchise_id' });
 Courses.belongsTo(Franchise_Signup, { foreignKey: 'Franchise_id' });
 
 module.exports = Courses

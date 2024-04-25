@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 
 const generateTokenFranchise = (Franchise) => {
-    console.log("<<<<<<<<<>>>>>>>>>>>>",Franchise)
     const payload = {
         fran_id: Franchise.fran_id,
         fran_email: Franchise.fran_email,
@@ -10,7 +9,7 @@ const generateTokenFranchise = (Franchise) => {
     };
     const secretKey = process.env.JWT_SECRET2;
     const options = {
-        expiresIn: '1h'
+        expiresIn: '10h'
     };
     return jwt.sign(payload, secretKey, options);
 };

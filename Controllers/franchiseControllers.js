@@ -1,6 +1,7 @@
 const FranchiseModel = require("../models/franchiseModel.js");
 const getToken = require("../Middleware/franAuth.js");
 const bcrypt = require("bcryptjs");
+const Courses = require("../models/CourseModel.js");
 
 const add_Franchise = async (req, res) => {
     try {
@@ -312,6 +313,27 @@ const deleteFranchise = async (req, res) => {
     }
 };
 
+const getFranchiseCourses = async (req, res) => {
+    try {
+        const data = await FranchiseModel.findOne({
+            where: {fran_id: req.body.franchiseId},
+            include: [{model: Courses}]
+        });
+        res.status(200).send({
+            success: true,
+            message: "Franchise Cources get successfully",
+            data: data
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({
+            success: false,
+            message: "Error in Delete Franchise API",
+            error: error.message,
+        });
+    }
+}
+
 module.exports = {
     add_Franchise,
     getAllFranchise,
@@ -321,5 +343,6 @@ module.exports = {
     updateFranchisePassword,
     resetFranchisePassword,
     loginFranchise,
-    deleteFranchise
+    deleteFranchise,
+    getFranchiseCourses
 };

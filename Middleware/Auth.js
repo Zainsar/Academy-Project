@@ -9,7 +9,7 @@ const generateToken = (admin) => {
     };
     const secretKey = process.env.JWT_SECRET;
     const options = {
-        expiresIn: '1h'
+        expiresIn: '10h'
     };
     return jwt.sign(payload, secretKey, options);
 };

@@ -1,45 +1,45 @@
 const db = require("../config/dbconfig.js")
 const Sequelize = require("sequelize");
+const Courses = require("./CourseModel.js");
+const Like_Dislike = require("./LikeDislike.js");
 
-const Franchise_Signup = db.define("franchise_signup", {
-    fran_id: {
+const User = db.define("User", {
+    User_id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
     },
-    fran_email: {
+    User_email: {
         type: Sequelize.STRING,
         // allowNull: false,
         unique: {
-            name: 'Franchise_email_unique',
+            name: 'User_email_unique',
             msg: 'Email address is already in use.'
         }
     },
-    fran_username: {
+    User_username: {
         type: Sequelize.STRING,
         // allowNull: false,
         unique: {
-            name: 'Franchise_Username_unique',
+            name: 'User_Username_unique',
             msg: 'Username is already in use.'
         }
     },
-    fran_password: {
+    User_password: {
         type: Sequelize.STRING,
         // allowNull: false,
     },
-    fran_address: {
+    User_address: {
         type: Sequelize.STRING,
         // allowNull: false,
     },
-    fran_phone: {
+    User_phone: {
         type: Sequelize.STRING,
-        // allowNull: false,
-    },
-    fran_Status: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: () => true
         // allowNull: false,
     }
 })
 
-module.exports = Franchise_Signup
+Courses.hasMany(User, { foreignKey: 'C_id' });
+User.belongsToMany(Courses, { through: Like_Dislike, foreignKey: 'User_id' });
+
+module.exports = User
