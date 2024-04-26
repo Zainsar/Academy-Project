@@ -2,6 +2,7 @@ const CourseModel = require("../models/CourseModel.js");
 const UserModel = require("../models/UserModel.js");
 const getToken = require("../Middleware/userAuth.js");
 const bcrypt = require("bcryptjs");
+const Franchise_Signup = require("../models/franchiseModel.js");
 
 const getAllCourse = async (req, res) => {
     try {
@@ -241,7 +242,7 @@ const loginUser = async (req, res) => {
             });
         }
 
-        const User = await UserModel.findOne({ where: { User_email : req.body.User_email} });
+        const User = await UserModel.findOne({ where: { User_email: req.body.User_email } });
         if (!User) {
             return res.status(404).json({
                 success: false,
@@ -310,6 +311,36 @@ const deleteUser = async (req, res) => {
     }
 };
 
+const FranchiseWithCourses = async (req, res) => {
+    try {
+        // const Course = await CourseModel.findByPk(req.body.C_id);
+        const Course = await CourseModel.findOne({
+            where: { C_id: req.body.id },
+            include: [{ model: Franchise_Signup }]
+        });
+
+        if (!Course) {
+            return res.status(404).send({
+                success: false,
+                message: "Franchise & Courses Not Found",
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Franchise All Courses get Successfully",
+            Course,
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            success: false,
+            message: "Error in Get Franchise All Courses API",
+            error: error.message,
+        });
+    }
+};
+
 module.exports = {
     add_User,
     loginUser,
@@ -319,5 +350,6 @@ module.exports = {
     resetUserPassword,
     deleteUser,
     getAllUser,
-    getOneUser
+    getOneUser,
+    FranchiseWithCourses
 };

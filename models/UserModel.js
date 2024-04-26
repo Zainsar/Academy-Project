@@ -1,6 +1,5 @@
 const db = require("../config/dbconfig.js")
 const Sequelize = require("sequelize");
-const Courses = require("./CourseModel.js");
 const Like_Dislike = require("./LikeDislike.js");
 
 const User = db.define("User", {
@@ -39,7 +38,6 @@ const User = db.define("User", {
     }
 })
 
-Courses.hasMany(User, { foreignKey: 'C_id' });
-User.belongsToMany(Courses, { through: Like_Dislike, foreignKey: 'User_id' });
+User.hasMany(Like_Dislike, { foreignKey: "U_id" })
 
 module.exports = User

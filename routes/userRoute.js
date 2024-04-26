@@ -19,6 +19,8 @@ router.post("/resetPassworduser", User, UserController.resetUserPassword);
 
 router.delete("/deleteuser/:User_id", User, UserController.deleteUser);
 
+router.get("/CourseswithFranchise", User, UserController.FranchiseWithCourses);
+
 // Courses
 
 router.get("/AllCourses", User, UserController.getAllCourse);

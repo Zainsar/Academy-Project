@@ -1,5 +1,6 @@
 const db = require("../config/dbconfig.js");
 const Sequelize = require("sequelize");
+const Courses = require("./CourseModel.js");
 
 const Like_Dislike = db.define("Like_Dislike", {
     LD_id: {
@@ -14,9 +15,10 @@ const Like_Dislike = db.define("Like_Dislike", {
         type: Sequelize.UUID,
     },
     LD_Status: {
-        type: Sequelize.STRING,
-        defaultValue: () => true,
+        type: Sequelize.BOOLEAN,
     }
 });
+
+Like_Dislike.belongsTo(Courses, { foreignKey: "Course_id" })
 
 module.exports = Like_Dislike;

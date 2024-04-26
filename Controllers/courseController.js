@@ -118,7 +118,7 @@ const FranchiseWithCourses = async (req, res) => {
 
 const getOneCourse = async (req, res) => {
     try {
-        const Course = await CourseModel.findOne(req.params.C_id);
+        const Course = await CourseModel.findByPk(req.body.C_id);
         if (!Course) {
             return res.status(404).send({
                 success: false,

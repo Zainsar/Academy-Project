@@ -60,7 +60,7 @@ const getAllFranchise = async (req, res) => {
 
 const getOneFranchise = async (req, res) => {
     try {
-        const Franchise = await FranchiseModel.findOne(req.params.fran_id);
+        const Franchise = await FranchiseModel.findByPk(req.body.fran_id);
         if (!Franchise) {
             return res.status(404).send({
                 success: false,
@@ -194,31 +194,39 @@ const updateFranchisePassword = async (req, res) => {
 
 const resetFranchisePassword = async (req, res) => {
     try {
-        const { fran_email, fran_newPassword } = req.body;
-
-        if (!fran_email || !fran_newPassword) {
-            return res.status(400).send({
-                success: false,
-                message: "Bad Request: Please provide email and new password.",
-            });
-        }
-
-        const Franchise = await FranchiseModel.findOne({ where: { fran_email } });
-        if (!Franchise) {
-            return res.status(404).send({
-                success: false,
-                message: "Franchise Not Found",
-            });
-        }
+        const { userId, fran_newPassword } = req.body;
 
         const salt = bcrypt.genSaltSync(10);
         const hashedPassword = await bcrypt.hash(fran_newPassword, salt);
-        Franchise.fran_password = hashedPassword;
-        await Franchise.save();
+
+        const updatePassword = await FranchiseModel.update({
+            fran_password: hashedPassword
+        }, {
+            where: { fran_id: userId }
+        })
+
         res.status(200).send({
             success: true,
             message: "Franchise Password Reset Successfully",
         });
+
+        // if (!fran_email || !fran_newPassword) {
+        //     return res.status(400).send({
+        //         success: false,
+        //         message: "Bad Request: Please provide email and new password.",
+        //     });
+        // }
+
+        // const Franchise = await FranchiseModel.findOne({ where: { fran_email } });
+        // if (!Franchise) {
+        //     return res.status(404).send({
+        //         success: false,
+        //         message: "Franchise Not Found",
+        //     });
+        // }
+
+
+
     } catch (error) {
         console.log(error);
         res.status(500).send({
@@ -316,8 +324,8 @@ const deleteFranchise = async (req, res) => {
 const getFranchiseCourses = async (req, res) => {
     try {
         const data = await FranchiseModel.findOne({
-            where: {fran_id: req.body.franchiseId},
-            include: [{model: Courses}]
+            where: { fran_id: req.body.franchiseId },
+            include: [{ model: Courses }]
         });
         res.status(200).send({
             success: true,

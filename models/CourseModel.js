@@ -41,8 +41,7 @@ const Courses = db.define("courses", {
         allowNull: false
     },
     C_Status: {
-        type: Sequelize.STRING,
-        allowNull: false,
+        type: Sequelize.BOOLEAN,
         defaultValue: () => true
     }
 })
