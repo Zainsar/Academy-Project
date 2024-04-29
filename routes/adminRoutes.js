@@ -1,21 +1,22 @@
 const express = require("express");
-const AdminController = require("../Controllers/adminControllers.js");
+const { add_Admin, getAdminController, updateAdminController, updatePasswordController,
+    resetPasswordController, loginAdmin, deleteAdminController } = require("../Controllers/adminControllers.js");
 const Auth2 = require("../Middleware/Auth2.js");
 
 const router = express.Router();
 
-router.post("/addadmin", AdminController.add_Admin);
+router.post("/addadmin", add_Admin);
 
-router.get("/getAdmin", Auth2, AdminController.getAdminController);
+router.get("/getAdmin", Auth2, getAdminController);
 
-router.put("/updateAdmin/:admin_id", Auth2, AdminController.updateAdminController);
+router.put("/updateAdmin", Auth2, updateAdminController);
 
-router.post("/updatePassword/:admin_id", Auth2, AdminController.updatePasswordController);
+router.post("/updatePassword", Auth2, updatePasswordController);
 
-router.post("/resetPassword", Auth2, AdminController.resetPasswordController);
+router.post("/resetPassword", Auth2, resetPasswordController);
 
-router.post("/loginAdmin", AdminController.loginAdmin);
+router.post("/loginAdmin", loginAdmin);
 
-router.delete("/deleteAdmin/:admin_id", Auth2, AdminController.deleteAdminController);
+router.delete("/deleteAdmin", Auth2, deleteAdminController);
 
 module.exports = router;

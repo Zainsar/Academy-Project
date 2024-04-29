@@ -1,26 +1,14 @@
 const express = require("express");
-const { getwhishListCources, add_LD } = require("../Controllers/like_dislikeController.js");
+const { add_LD, getwhishListCources, updateLDStatus, deleteLD } = require("../Controllers/like_dislikeController.js");
 const User = require('../Middleware/userAuth2.js')
 const router = express.Router();
 
-
 router.post("/addLD", User, add_LD);
+
 router.post("/getwhishListCources", User, getwhishListCources);
 
-// router.get("/getallLD", LDController.getAllLD);
+router.put("/UpdateStatus", User, updateLDStatus);
 
-// router.get("/getoneLD", LDController.getOneLD);
-
-// router.get("/getAllLikeD", LDController.getAllLikeDislike);
-
-// router.put("/UpdateStatus/:LD_id", LDController.updateLDStatus);
-
-// router.get("/likeCourseDetail", LDController.getLikedCourseDetails);
-
-// router.get("/dislikecourse", LDController.seeallDislikeCourse);
-
-// router.get("/likecourse", LDController.seealllikeCourse);
-
-// router.delete("/deleteLD/:LD_id", LDController.deleteLD);
+router.delete("/deleteLD", User, deleteLD);
 
 module.exports = router;

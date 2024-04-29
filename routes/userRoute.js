@@ -1,5 +1,6 @@
 const express = require("express");
-const UserController = require("../Controllers/userController.js");
+const { add_User, loginUser, updateUserProfile, updateUserPassword, resetUserPassword, deleteUser,
+    FranchiseWithCourses, getAllCourse, getAllUser, getOneUser } = require("../Controllers/userController.js");
 const User = require("../Middleware/userAuth2.js");
 const AdminToken = require("../Middleware/Auth2.js");
 
@@ -7,28 +8,28 @@ const router = express.Router();
 
 //User
 
-router.post("/adduser", UserController.add_User);
+router.post("/adduser", add_User);
 
-router.post("/loginUser", UserController.loginUser);
+router.post("/loginUser", loginUser);
 
-router.put("/updateuserpro/:User_id", User, UserController.updateUserProfile);
+router.put("/updateuserpro", User, updateUserProfile);
 
-router.post("/updatePassworduser/:User_id", User, UserController.updateUserPassword);
+router.post("/updatePassworduser", User, updateUserPassword);
 
-router.post("/resetPassworduser", User, UserController.resetUserPassword);
+router.post("/resetPassworduser", User, resetUserPassword);
 
-router.delete("/deleteuser/:User_id", User, UserController.deleteUser);
+router.delete("/deleteuser", User, deleteUser);
 
-router.get("/CourseswithFranchise", User, UserController.FranchiseWithCourses);
+router.get("/CourseswithFranchise", User, FranchiseWithCourses);
 
 // Courses
 
-router.get("/AllCourses", User, UserController.getAllCourse);
+router.get("/AllCourses", User, getAllCourse);
 
 // Admin
 
-router.get("/getalluser", AdminToken, UserController.getAllUser);
+router.get("/getalluser", AdminToken, getAllUser);
 
-router.get("/getoneuser", AdminToken, UserController.getOneUser);
+router.get("/getoneuser", AdminToken, getOneUser);
 
 module.exports = router;

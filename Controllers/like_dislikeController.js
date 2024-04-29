@@ -6,8 +6,8 @@ const tokedid = require('../Middleware/userAuth.js');
 const Like_Dislike = require("../models/LikeDislike.js");
 
 const add_LD = async (req, res) => {
-    console.log('<<<<<<<<<<<<>>>>>>>>>>>>>', req.body)
     try {
+
         const LD = new LDModel({
             U_id: req.User.User_id,
             Course_id: req.body.Cid,
@@ -16,12 +16,22 @@ const add_LD = async (req, res) => {
 
         const newLD = await LD.save();
 
-        res.status(200).json({
-            success: true,
-            message: "You Like This Course",
-            newLD
-        });
-    } catch (error) {
+        if (LD.LD_Status == true) {
+            res.status(200).json({
+                success: true,
+                message: "You Like This Course",
+                newLD
+            });
+        } else {
+            res.status(200).json({
+                success: true,
+                message: "You DisLike This Course",
+                newLD
+            });
+
+        }
+    }
+    catch (error) {
         console.error(error);
         res.status(500).json({
             success: false,
@@ -33,6 +43,7 @@ const add_LD = async (req, res) => {
 
 const getwhishListCources = async (req, res) => {
     try {
+
         if (req.body.status == true) {
             const data = await User.findOne({
                 where: { User_id: req.body.userId },
@@ -41,12 +52,14 @@ const getwhishListCources = async (req, res) => {
                     include: [{ model: Courses }]
                 }]
             });
+
             res.status(200).json({
                 success: true,
                 message: "Get All Like Courses successfully",
                 data: data
             });
-        } else {
+        }
+        else if (req.body.status == false) {
             const data = await User.findOne({
                 where: { User_id: req.body.userId },
                 include: [{
@@ -54,14 +67,30 @@ const getwhishListCources = async (req, res) => {
                     include: [{ model: Courses }]
                 }]
             });
+
             res.status(200).json({
                 success: true,
                 message: "Get All Dislike Courses successfully",
                 data: data
             });
-
         }
-    } catch (error) {
+        else {
+            const data = await User.findOne({
+                where: { User_id: req.body.userId },
+                include: [{
+                    model: Like_Dislike,
+                    include: [{ model: Courses }]
+                }]
+            });
+
+            res.status(200).json({
+                success: true,
+                message: "Get All like Dislike Courses successfully",
+                data: data
+            });
+        }
+    }
+    catch (error) {
         console.error(error);
         res.status(500).json({
             success: false,
@@ -71,249 +100,73 @@ const getwhishListCources = async (req, res) => {
     }
 }
 
+const updateLDStatus = async (req, res) => {
+    try {
 
-// const getAllLD = async (req, res) => {
-//     try {
-//         const LD = await LDModel.findAll();
-//         if (!LD || LD.length === 0) {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: "LD Not Found",
-//             });
-//         }
+        const { lid, LD_Status } = req.body;
 
-//         res.status(200).json({
-//             success: true,
-//             message: "All LD get Successfully",
-//             LD,
-//         });
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({
-//             success: false,
-//             message: "Error in Get All LD API",
-//             error: error.message,
-//         });
-//     }
-// };
+        const LD = await LDModel.update({
+            LD_Status: LD_Status
+        }, {
+            where: { LD_id: lid }
+        });
 
-// const getOneLD = async (req, res) => {
-//     try {
-//         const LD = await LDModel.findOne(req.params.LD_id);
-//         if (!LD) {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: "LD Not Found",
-//             });
-//         }
+        if (!LD) {
+            return res.status(404).json({
+                success: false,
+                message: "LD not found",
+            })
+        }
 
-//         res.status(200).json({
-//             success: true,
-//             message: "LD Data Found Successfully",
-//             LD,
-//         });
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({
-//             success: false,
-//             message: "Error in Get One LD API",
-//             error: error.message,
-//         });
-//     }
-// };
+        res.status(200).json({
+            success: true,
+            message: "Status update Successfully",
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            message: "Error in Update Status LD API",
+            error: error.message,
+        });
+    }
+};
 
-// const getAllLikeDislike = async (req, res) => {
-//     try {
-//         const LD = await LDModel.findAll({ where: { LD_Status: req.body.Status } });
-//         if (!LD) {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: "Like Dislike Not Found",
-//             });
-//         }
+const deleteLD = async (req, res) => {
+    try {
 
-//         res.status(200).json({
-//             success: true,
-//             message: "Like Dislike Data Found Successfully",
-//             LD,
-//         });
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({
-//             success: false,
-//             message: "Error in Get All Like API",
-//             error: error.message,
-//         });
-//     }
-// };
+        const LD_id = req.body.lid;
 
-// const updateLDStatus = async (req, res) => {
-//     try {
-//         const LD = await LDModel.findByPk(req.params.LD_id);
+        const LD = await LDModel.findByPk(LD_id);
 
-//         if (!LD) {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: "LD not found",
-//             })
-//         }
-//         const { LD_Status } = req.body;
-//         if (LD_Status) LD.LD_Status = LD_Status;
+        if (!LD) {
+            return res.status(404).json({
+                success: false,
+                message: "LD not found",
+            });
+        }
 
-//         await LD.save();
+        await LD.destroy();
 
-//         res.status(200).json({
-//             success: true,
-//             message: "Status update Successfully",
-//         });
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({
-//             success: false,
-//             message: "Error in Update Status LD API",
-//             error: error.message,
-//         });
-//     }
-// };
-
-// const seealllikeCourse = async (req, res) => {
-//     try {
-//         const LD = await LDModel.findByPk(req.params.LD_id);
-
-//         if (!LD) {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: "LD not found",
-//             })
-//         }
-
-//         if (!LD.Status == 'liked') {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: "LD not found",
-//             })
-//         }
-
-//         res.status(200).json({
-//             success: true,
-//             message: "Get All Liked Courses Successfully",
-//         });
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({
-//             success: false,
-//             message: "Error in Update Status LD API",
-//             error: error.message,
-//         });
-//     }
-// };
-
-// const seeallDislikeCourse = async (req, res) => {
-//     try {
-//         const LD = await LDModel.findByPk(req.params.LD_id);
-
-//         if (!LD) {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: "LD not found",
-//             })
-//         }
-
-//         if (!LD.Status == 'disliked') {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: "LD not found",
-//             })
-//         }
-
-//         res.status(200).json({
-//             success: true,
-//             message: "Get All Disiked Courses Successfully",
-//         });
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({
-//             success: false,
-//             message: "Error in Update Status LD API",
-//             error: error.message,
-//         });
-//     }
-// };
-
-// const getLikedCourseDetails = async (req, res) => {
-//     try {
-//         const likeDetails = await LDModel.findOne({
-//             where: {
-//                 U_id: req.params.userId,
-//                 Course_id: req.params.cId
-//             },
-//             include: [
-//                 { model: Courses },
-//                 { model: User },
-//                 { model: LDModel }
-//             ]
-//         });
-
-//         if (!likeDetails) {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: "Like details not found",
-//             });
-//         }
-
-//         res.status(200).json({
-//             success: true,
-//             message: "Like details found successfully",
-//             likeDetails,
-//         });
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({
-//             success: false,
-//             message: "Error in retrieving like details",
-//             error: error.message,
-//         });
-//     }
-// }
-
-// const deleteLD = async (req, res) => {
-//     try {
-//         const LD_id = req.params.LD_id;
-
-//         const LD = await LDModel.findByPk(LD_id);
-
-//         if (!LD) {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: "LD not found",
-//             });
-//         }
-
-//         await LD.destroy();
-
-//         res.status(200).json({
-//             success: true,
-//             message: "LD deleted successfully",
-//         });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({
-//             success: false,
-//             message: "Error in Delete LD API",
-//             error: error.message,
-//         });
-//     }
-// };
+        res.status(200).json({
+            success: true,
+            message: "LD deleted successfully",
+        });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "Error in Delete LD API",
+            error: error.message,
+        });
+    }
+};
 
 module.exports = {
     add_LD,
-    getwhishListCources
-    // getAllLD,
-    // getOneLD,
-    // getAllLikeDislike,
-    // updateLDStatus,
-    // getLikedCourseDetails,
-    // deleteLD,
-    // seeallDislikeCourse,
-    // seealllikeCourse
+    getwhishListCources,
+    updateLDStatus,
+    deleteLD
 };

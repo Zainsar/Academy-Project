@@ -10,7 +10,6 @@ const User = db.define("User", {
     },
     User_email: {
         type: Sequelize.STRING,
-        // allowNull: false,
         unique: {
             name: 'User_email_unique',
             msg: 'Email address is already in use.'
@@ -18,7 +17,6 @@ const User = db.define("User", {
     },
     User_username: {
         type: Sequelize.STRING,
-        // allowNull: false,
         unique: {
             name: 'User_Username_unique',
             msg: 'Username is already in use.'
@@ -26,15 +24,12 @@ const User = db.define("User", {
     },
     User_password: {
         type: Sequelize.STRING,
-        // allowNull: false,
     },
     User_address: {
         type: Sequelize.STRING,
-        // allowNull: false,
     },
     User_phone: {
         type: Sequelize.STRING,
-        // allowNull: false,
     }
 })
 

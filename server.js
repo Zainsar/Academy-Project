@@ -2,12 +2,14 @@ const express = require('express')
 const cors = require('cors')
 const db = require("./config/dbconfig.js")
 const bodyParser = require('body-parser')
-const router = require('./routes/adminRoutes.js')
+const adminrouter = require('./routes/adminRoutes.js')
 const franchiserouter = require('./routes/franchiseRoute.js')
 const Courserouter = require('./routes/courseRoute.js')
 const Userrouter = require('./routes/userRoute.js')
 const LD_router = require('./routes/LDRoute.js')
-const dontenv = require("dotenv").config()
+const dontenv = require("dotenv")
+
+dontenv.config()
 
 const app = express()
 
@@ -16,6 +18,7 @@ const corOptions = {
 }
 
 // server
+// 
 db.sync({ alter: true })
     .then(() => {
         app.listen(PORT, console.log(`Server started on port ${PORT}`));
@@ -39,11 +42,11 @@ app.get('/api', (req, res) => {
 })
 
 // Router
-app.use('/api/academy', router)
-app.use('/api/academy', franchiserouter)
-app.use('/api/academy', Courserouter)
-app.use('/api/academy', Userrouter)
-app.use('/api/academy', LD_router)
+app.use('/api/academy/admin', adminrouter)
+app.use('/api/academy/franchise', franchiserouter)
+app.use('/api/academy/course', Courserouter)
+app.use('/api/academy/user', Userrouter)
+app.use('/api/academy/ld', LD_router)
 
 //port
 const PORT = process.env.PORT || 8080

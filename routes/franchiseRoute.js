@@ -1,5 +1,7 @@
 const express = require("express");
-const FranchiseController = require("../Controllers/franchiseControllers.js");
+const { updateFranchiseProfile, updateFranchisePassword, resetFranchisePassword, loginFranchise,
+    updateFranchiseStatus, add_Franchise, getAllFranchise, getOneFranchise, deleteFranchise,
+    getFranchiseCourses } = require("../Controllers/franchiseControllers.js");
 const Franchise = require("../Middleware/franAuth2.js");
 const AdminToken = require("../Middleware/Auth2.js");
 
@@ -7,26 +9,26 @@ const router = express.Router();
 
 // Franchise
 
-router.put("/updatefranpro/:fran_id", Franchise, FranchiseController.updateFranchiseProfile);
+router.put("/updatefranpro", Franchise, updateFranchiseProfile);
 
-router.post("/updatePasswordfran/:fran_id", Franchise, FranchiseController.updateFranchisePassword);
+router.post("/updatePasswordfran", Franchise, updateFranchisePassword);
 
-router.post("/resetPasswordfran", Franchise, FranchiseController.resetFranchisePassword);
+router.post("/resetPasswordfran", Franchise, resetFranchisePassword);
 
-router.post("/loginfranchise", FranchiseController.loginFranchise);
+router.post("/loginfranchise", loginFranchise);
 
 // Admin 
 
-router.put("/updatefranStatus/:fran_id", AdminToken, FranchiseController.updateFranchiseStatus);
+router.put("/updatefranStatus", AdminToken, updateFranchiseStatus);
 
-router.post("/addfran", AdminToken, FranchiseController.add_Franchise);
+router.post("/addfran", AdminToken, add_Franchise);
 
-router.get("/getallfran", AdminToken, FranchiseController.getAllFranchise);
+router.get("/getallfran", AdminToken, getAllFranchise);
 
-router.get("/getonefran", AdminToken, FranchiseController.getOneFranchise);
+router.get("/getonefran", AdminToken, getOneFranchise);
 
-router.delete("/deletefran/:fran_id", AdminToken, FranchiseController.deleteFranchise);
+router.delete("/deletefran", AdminToken, deleteFranchise);
 
-router.post("/getFranchiseCourses", AdminToken, FranchiseController.getFranchiseCourses);
+router.post("/getFranchiseCourses", AdminToken, getFranchiseCourses);
 
 module.exports = router;

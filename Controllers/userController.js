@@ -6,22 +6,25 @@ const Franchise_Signup = require("../models/franchiseModel.js");
 
 const getAllCourse = async (req, res) => {
     try {
+
         const Course = await CourseModel.findAll();
+
         if (!Course || Course.length === 0) {
-            return res.status(404).send({
+            return res.status(404).json({
                 success: false,
                 message: "Course Not Found",
             });
         }
 
-        res.status(200).send({
+        res.status(200).json({
             success: true,
             message: "All Course get Successfully",
             Course,
         });
-    } catch (error) {
+    }
+    catch (error) {
         console.log(error);
-        res.status(500).send({
+        res.status(500).json({
             success: false,
             message: "Error in Get All Course API",
             error: error.message,
@@ -31,6 +34,7 @@ const getAllCourse = async (req, res) => {
 
 const add_User = async (req, res) => {
     try {
+
         const salt = bcrypt.genSaltSync(10);
         const hashedPassword = await bcrypt.hash(req.body.User_password, salt);
 
@@ -49,11 +53,12 @@ const add_User = async (req, res) => {
             message: "User Added Successfully",
             newUser
         });
-    } catch (error) {
+    }
+    catch (error) {
         console.error(error);
         res.status(500).json({
             success: false,
-            message: "Error in Add User API",
+            name: "User UserName & Email Unique",
             error: error.message,
         });
     }
@@ -61,7 +66,9 @@ const add_User = async (req, res) => {
 
 const getAllUser = async (req, res) => {
     try {
+
         const User = await UserModel.findAll();
+
         if (!User || User.length === 0) {
             return res.status(404).json({
                 success: false,
@@ -76,7 +83,8 @@ const getAllUser = async (req, res) => {
             message: "All User get Successfully",
             User,
         });
-    } catch (error) {
+    }
+    catch (error) {
         console.log(error);
         res.status(500).json({
             success: false,
@@ -88,7 +96,9 @@ const getAllUser = async (req, res) => {
 
 const getOneUser = async (req, res) => {
     try {
-        const User = await UserModel.findOne(req.params.User_id);
+
+        const User = await UserModel.findByPk(req.body.User_id);
+
         if (!User) {
             return res.status(404).json({
                 success: false,
@@ -103,7 +113,8 @@ const getOneUser = async (req, res) => {
             message: "User Data Found Successfully",
             User,
         });
-    } catch (error) {
+    }
+    catch (error) {
         console.log(error);
         res.status(500).json({
             success: false,
@@ -115,9 +126,16 @@ const getOneUser = async (req, res) => {
 
 const updateUserProfile = async (req, res) => {
     try {
-        const User = await UserModel.findByPk(req.params.User_id);
 
-        console.log('<<<<<<<<<<<>>>>>>>>>>>\n\n', User)
+        const { uid, User_username, User_address, User_phone } = req.body;
+
+        const User = await UserModel.update({
+            User_username: User_username,
+            User_address: User_address,
+            User_phone: User_phone
+        }, {
+            where: { User_id: uid }
+        });
 
         if (!User) {
             return res.status(404).json({
@@ -125,18 +143,13 @@ const updateUserProfile = async (req, res) => {
                 message: "User not found",
             })
         }
-        const { User_username, User_address, User_phone } = req.body;
-        if (User_username) User.User_username = User_username;
-        if (User_address) User.User_address = User_address;
-        if (User_phone) User.User_phone = User_phone;
-
-        await User.save();
 
         res.status(200).json({
             success: true,
             message: "User Profile Updated Successfully",
         });
-    } catch (error) {
+    }
+    catch (error) {
         console.log(error);
         res.status(500).json({
             success: false,
@@ -148,16 +161,9 @@ const updateUserProfile = async (req, res) => {
 
 const updateUserPassword = async (req, res) => {
     try {
-        const User = await UserModel.findByPk(req.params.User_id);
 
-        if (!User) {
-            return res.status(404).json({
-                success: false,
-                message: "User Not Found",
-            });
-        }
+        const { uid, User_oldPassword, User_newPassword } = req.body;
 
-        const { User_oldPassword, User_newPassword } = req.body;
         if (!User_oldPassword || !User_newPassword) {
             return res.status(400).json({
                 success: false,
@@ -165,7 +171,16 @@ const updateUserPassword = async (req, res) => {
             });
         }
 
+        const User = await UserModel.findOne({ where: { User_id: uid } })
+
+        if (!User) {
+            return res.status(404).json({
+                success: false,
+                message: "User Not Found",
+            });
+        }
         const isMatch = await bcrypt.compare(User_oldPassword, User.User_password);
+
         if (!isMatch) {
             return res.status(400).json({
                 success: false,
@@ -175,15 +190,19 @@ const updateUserPassword = async (req, res) => {
 
         const salt = bcrypt.genSaltSync(10);
         const hashedPassword = await bcrypt.hash(User_newPassword, salt);
-        User.User_password = hashedPassword;
 
-        await User.save();
+        await UserModel.update({
+            User_password: hashedPassword
+        }, {
+            where: { User_id: uid }
+        });
 
         res.status(200).json({
             success: true,
             message: "User Password Updated!",
         });
-    } catch (error) {
+    }
+    catch (error) {
         console.log(error);
         res.status(500).json({
             success: false,
@@ -195,16 +214,18 @@ const updateUserPassword = async (req, res) => {
 
 const resetUserPassword = async (req, res) => {
     try {
-        const { User_email, User_newPassword } = req.body;
 
-        if (!User_email || !User_newPassword) {
-            return res.status(400).json({
-                success: false,
-                message: "Bad Request: Please provide email and new password.",
-            });
-        }
+        const { uid, User_newPassword } = req.body;
 
-        const User = await UserModel.findOne({ where: { User_email } });
+        const salt = bcrypt.genSaltSync(10);
+        const hashedPassword = await bcrypt.hash(User_newPassword, salt);
+
+        const User = await UserModel.update({
+            User_password: hashedPassword
+        }, {
+            where: { User_id: uid }
+        });
+
         if (!User) {
             return res.status(404).json({
                 success: false,
@@ -212,15 +233,12 @@ const resetUserPassword = async (req, res) => {
             });
         }
 
-        const salt = bcrypt.genSaltSync(10);
-        const hashedPassword = await bcrypt.hash(User_newPassword, salt);
-        User.User_password = hashedPassword;
-        await User.save();
         res.status(200).json({
             success: true,
             message: "User Password Reset Successfully",
         });
-    } catch (error) {
+    }
+    catch (error) {
         console.log(error);
         res.status(500).json({
             success: false,
@@ -232,7 +250,7 @@ const resetUserPassword = async (req, res) => {
 
 const loginUser = async (req, res) => {
     try {
-        console.log(req.body)
+
         const { User_email, User_password } = req.body;
 
         if (!User_email || !User_password) {
@@ -243,6 +261,7 @@ const loginUser = async (req, res) => {
         }
 
         const User = await UserModel.findOne({ where: { User_email: req.body.User_email } });
+
         if (!User) {
             return res.status(404).json({
                 success: false,
@@ -251,6 +270,7 @@ const loginUser = async (req, res) => {
         }
 
         const isPasswordValid = await bcrypt.compare(User_password, User.User_password);
+
         if (!isPasswordValid) {
             return res.status(401).json({
                 success: false,
@@ -272,7 +292,8 @@ const loginUser = async (req, res) => {
                 User_phone: User.User_phone
             }
         });
-    } catch (error) {
+    }
+    catch (error) {
         console.error(error);
         res.status(500).json({
             success: false,
@@ -284,7 +305,8 @@ const loginUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     try {
-        const User_id = req.params.User_id;
+
+        const User_id = req.body.User_id;
 
         const User = await UserModel.findByPk(User_id);
 
@@ -301,7 +323,8 @@ const deleteUser = async (req, res) => {
             success: true,
             message: "User deleted successfully",
         });
-    } catch (error) {
+    }
+    catch (error) {
         console.error(error);
         res.status(500).json({
             success: false,
@@ -313,14 +336,14 @@ const deleteUser = async (req, res) => {
 
 const FranchiseWithCourses = async (req, res) => {
     try {
-        // const Course = await CourseModel.findByPk(req.body.C_id);
+
         const Course = await CourseModel.findOne({
             where: { C_id: req.body.id },
             include: [{ model: Franchise_Signup }]
         });
 
         if (!Course) {
-            return res.status(404).send({
+            return res.status(404).json({
                 success: false,
                 message: "Franchise & Courses Not Found",
             });
@@ -331,9 +354,10 @@ const FranchiseWithCourses = async (req, res) => {
             message: "Franchise All Courses get Successfully",
             Course,
         });
-    } catch (error) {
+    }
+    catch (error) {
         console.log(error);
-        res.status(500).send({
+        res.status(500).json({
             success: false,
             message: "Error in Get Franchise All Courses API",
             error: error.message,

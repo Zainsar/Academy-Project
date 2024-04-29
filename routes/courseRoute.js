@@ -1,5 +1,6 @@
 const express = require("express");
-const CourseController = require("../Controllers/courseController.js");
+const { add_Course, getAllCourse, getOneCourse, updateCourseProfile, updateCourseStatus,
+    deleteCourse, FranchiseAllCourses, FranchiseWithCourses } = require("../Controllers/courseController.js");
 const Franchise = require("../Middleware/franAuth2.js");
 const AdminToken = require("../Middleware/Auth2.js");
 
@@ -7,21 +8,21 @@ const router = express.Router();
 
 // Courses
 
-router.post("/addcourse", Franchise, CourseController.add_Course);
+router.post("/addcourse", Franchise, add_Course);
 
-router.get("/getallcourse", Franchise, CourseController.getAllCourse);
+router.get("/getallcourse", Franchise, getAllCourse);
 
-router.get("/getonecourse", Franchise, CourseController.getOneCourse);
+router.get("/getonecourse", Franchise, getOneCourse);
 
-router.put("/updatecoursepro/:C_id", Franchise, CourseController.updateCourseProfile);
+router.put("/updatecoursepro", Franchise, updateCourseProfile);
 
-router.put("/updatecoursestatus/:C_id", Franchise, CourseController.updateCourseStatus);
+router.put("/updatecoursestatus", Franchise, updateCourseStatus);
 
-router.delete("/deletecourse/:C_id", Franchise, CourseController.deleteCourse);
+router.delete("/deletecourse", Franchise, deleteCourse);
 
 // Admin
-router.get("/franchiseallcourses", AdminToken, CourseController.FranchiseAllCourses);
+router.get("/franchiseallcourses", AdminToken, FranchiseAllCourses);
 
-router.get("/FranchiseWithCourses", AdminToken, CourseController.FranchiseWithCourses);
+router.get("/FranchiseWithCourses", AdminToken, FranchiseWithCourses);
 
 module.exports = router;

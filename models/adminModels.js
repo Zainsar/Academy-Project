@@ -1,7 +1,7 @@
 const db = require("../config/dbconfig");
 const Sequelize = require("sequelize");
 
-const Admin_Signup = db.define("admin_signup", {
+const Admin_Signup = db.define("Academy_Admin", {
     admin_id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
